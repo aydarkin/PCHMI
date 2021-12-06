@@ -57,6 +57,30 @@ namespace Back.Controllers
                     if (editable == null)
                         return NotFound();
 
+                    if (item.Name != null)
+                        editable.Name = item.Name;
+
+                    if (item.Surname != null)
+                        editable.Surname = item.Surname;
+
+                    if (item.Patronymic != null)
+                        editable.Patronymic = item.Patronymic;
+
+                    if (item.Phone != null)
+                        editable.Phone = item.Phone;
+
+                    if (item.Email != null)
+                        editable.Email = item.Email;
+
+                    if (item.HasTelegram != null)
+                        editable.HasTelegram = item.HasTelegram;
+
+                    if (item.HasWhatsapp != null)
+                        editable.HasWhatsapp = item.HasWhatsapp;
+
+                    if (item.IsVIP != null)
+                        editable.IsVIP = item.IsVIP;
+
                     db.SaveChanges();
                 }
 

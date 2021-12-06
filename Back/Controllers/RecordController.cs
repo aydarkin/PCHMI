@@ -1,5 +1,6 @@
 ﻿using Back.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Back.Controllers
 {
@@ -13,7 +14,12 @@ namespace Back.Controllers
             List<Record> records;
             using (var db = new AppDBContext())
             {
-                records = db.Records.ToList();
+                records = db.Records
+                    .Include(x=>x.Client)
+                    .Include(x=>x.Service)
+                    .Include(x=>x.TimeInterval)
+                    .Include(x=>x.Master)
+                    .ToList();
             }
             return records;
         }
@@ -25,6 +31,11 @@ namespace Back.Controllers
             using (var db = new AppDBContext())
             {
                 record = db.Records.Find(id);
+
+                db.Clients.Where(c => c.Id == record.ClientId).Load();
+                db.Services.Where(c => c.Id == record.ServiceId).Load();
+                db.TimeIntervals.Where(c => c.Id == record.TimeIntervalId).Load();
+                db.Masters.Where(c => c.Id == record.MasterId).Load();
             }
             if (record == null)
                 return NotFound();
@@ -40,6 +51,11 @@ namespace Back.Controllers
             {
                 record = db.Records.Add(item).Entity;
                 db.SaveChanges();
+
+                db.Clients.Where(c => c.Id == record.ClientId).Load();
+                db.Services.Where(c => c.Id == record.ServiceId).Load();
+                db.TimeIntervals.Where(c => c.Id == record.TimeIntervalId).Load();
+                db.Masters.Where(c => c.Id == record.MasterId).Load();
             }
 
             return record;
@@ -56,6 +72,18 @@ namespace Back.Controllers
 
                     if (editable == null)
                         return NotFound();
+
+                    if (item.ClientId != null)
+                        editable.ClientId = item.ClientId;
+
+                    if (item.MasterId != null)
+                        editable.MasterId = item.MasterId;
+
+                    if (item.ServiceId != null)
+                        editable.ServiceId = item.ServiceId;
+
+                    if (item.TimeIntervalId != null)
+                        editable.TimeIntervalId = item.TimeIntervalId;
 
                     db.SaveChanges();
                 }

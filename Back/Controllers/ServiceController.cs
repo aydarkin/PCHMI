@@ -57,6 +57,12 @@ namespace Back.Controllers
                     if (editable == null)
                         return NotFound();
 
+                    if (item.Title != null)
+                        editable.Title = item.Title;
+
+                    if (item.Cost != 0)
+                        editable.Cost = item.Cost;
+
                     db.SaveChanges();
                 }
 

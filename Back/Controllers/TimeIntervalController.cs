@@ -32,19 +32,6 @@ namespace Back.Controllers
             return timeInterval;
         }
 
-        [HttpPost]
-        public ActionResult<TimeInterval> Post([FromBody] TimeInterval item)
-        {
-            TimeInterval timeInterval;
-            using (var db = new AppDBContext())
-            {
-                timeInterval = db.TimeIntervals.Add(item).Entity;
-                db.SaveChanges();
-            }
-
-            return timeInterval;
-        }
-
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] TimeInterval item)
         {
@@ -56,6 +43,9 @@ namespace Back.Controllers
 
                     if (editable == null)
                         return NotFound();
+
+                    if (item.Title != null)
+                        editable.Title = item.Title;
 
                     db.SaveChanges();
                 }

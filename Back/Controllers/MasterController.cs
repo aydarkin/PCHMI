@@ -66,6 +66,9 @@ namespace Back.Controllers
                     if (item.Patronymic != null)
                         editable.Patronymic = item.Patronymic;
 
+                    if (item.WorkPhone != null)
+                        editable.WorkPhone = item.WorkPhone;
+
                     db.SaveChanges();
                 }
 
