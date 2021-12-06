@@ -85,6 +85,9 @@ namespace Back.Controllers
                     if (item.TimeIntervalId != null)
                         editable.TimeIntervalId = item.TimeIntervalId;
 
+                    if (item.Date != null)
+                        editable.Date = item.Date;
+
                     db.SaveChanges();
                 }
 
