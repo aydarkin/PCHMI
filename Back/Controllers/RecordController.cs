@@ -11,7 +11,7 @@ namespace Back.Controllers
         [HttpGet]
         public IEnumerable<Record> Get()
         {
-            List<Record> records;
+            IEnumerable<Record> records;
             using (var db = new AppDBContext())
             {
                 records = db.Records
@@ -20,7 +20,10 @@ namespace Back.Controllers
                     .Include(x=>x.TimeInterval)
                     .Include(x=>x.Master)
                     .ToList();
+
+                records = records.OrderBy(l => l.Date).ToList();
             }
+            
             return records;
         }
 
