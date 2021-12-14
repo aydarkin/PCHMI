@@ -14,7 +14,7 @@
       <template #end>
         <b-navbar-item tag="div">
           <div class="buttons">
-            <a class="button is-success">
+            <a class="button is-success" @click="exit">
               <strong>Выйти</strong>
             </a>
           </div>
@@ -32,6 +32,7 @@
 import Vue from "vue";
 import Record from "./Record.vue";
 import Table from "./Table.vue";
+
 type TPage = "record" | "table";
 export default Vue.extend({
   name: "Page",
@@ -51,6 +52,11 @@ export default Vue.extend({
     route(page: TPage): void {
       this.$emit("pageChange", page);
     },
+
+    exit() {
+      document.cookie = 'key=';
+      this.$router.push('/auth');
+    }
   },
 });
 </script>

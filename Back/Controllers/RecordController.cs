@@ -21,7 +21,7 @@ namespace Back.Controllers
                     .Include(x=>x.Master)
                     .ToList();
 
-                records = records.OrderBy(l => l.Date).ToList();
+                records = records.OrderByDescending(l => l.Date).ThenByDescending(l => l.TimeIntervalId).ToList();
             }
             
             return records;
@@ -52,6 +52,9 @@ namespace Back.Controllers
             Record record;
             using (var db = new AppDBContext())
             {
+                if (item.ClientId != null)
+                    item.Client = null;
+
                 record = db.Records.Add(item).Entity;
                 db.SaveChanges();
 
@@ -65,7 +68,7 @@ namespace Back.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Record item)
+        public ActionResult<Record> Put(int id, [FromBody] Record item)
         {
             try
             {
@@ -91,10 +94,12 @@ namespace Back.Controllers
                     if (item.Date != null)
                         editable.Date = item.Date;
 
-                    db.SaveChanges();
-                }
+                    if (item.Check == "create")
+                        editable.Check = new Random().Next(1000000, 9999999).ToString();
 
-                return Ok();
+                    db.SaveChanges();
+                    return editable;
+                }
             }
             catch
             {

@@ -9,7 +9,10 @@
 import Vue from "vue";
 import Page from "./components/Page.vue";
 import Auth from "./components/Auth.vue";
+import Cookie from "./utils/Cookie";
+
 type TPage = "record" | "table" | undefined;
+
 export default Vue.extend({
   name: "App",
   components: {
@@ -22,11 +25,26 @@ export default Vue.extend({
       isAuth: false,
     };
   },
+
+  beforeCreate() {
+    const page = window.location.pathname.replaceAll("/", "");
+    if (page !== 'auth') {
+      // проверяем наличие авторизации
+      const key = Cookie.getCookie("key");
+      const date = new Date();
+      const expected = date.getFullYear() + date.getMonth() + date.getDate();
+
+      if (!(key && key == expected.toString())) {
+        this.$router.push('/auth');
+      }
+    }
+  },
+
   beforeMount() {
     const page = window.location.pathname.replaceAll("/", "");
     console.log("before", page);
-    if (["record", "table"].includes(page)) {
-      this.page = page as TPage;
+    if (["record", "table", ""].includes(page)) {
+      this.page = (page || 'table') as TPage;
       this.isAuth = false;
     } else if (["auth"].includes(page)) {
       this.isAuth = true;
@@ -47,7 +65,7 @@ export default Vue.extend({
   methods: {
     pageChanged(page: TPage): void {
       this.page = page;
-      window.history.pushState(null, "Messenger+", `/${page}`);
+      this.$router.push({name: 'Панель администратора', path: `/${page}`});
     },
   },
 });

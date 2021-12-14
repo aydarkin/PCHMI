@@ -4,7 +4,10 @@
       <b-tabs v-model="nameTab" type="is-boxed" :animated="false">
         <b-tab-item label="Ввести данные">
           <div
-            class="record-enter is-flex is-flex-wrap-nowrap is-justify-content-space-around"
+            class="
+              record-enter
+              is-flex is-flex-wrap-nowrap is-justify-content-space-around
+            "
           >
             <div class="record-enter__left">
               <b-field label="Фамилия">
@@ -15,6 +18,7 @@
               </b-field>
               <b-field label="Имя">
                 <b-input
+                  required
                   v-model="newClient.name"
                   placeholder="Введите имя клиента"
                 ></b-input>
@@ -29,6 +33,7 @@
             <div class="record-enter__right">
               <b-field label="Телефон">
                 <b-input
+                  required
                   v-model="newClient.phone"
                   placeholder="Введите номер телефона клиента"
                 ></b-input>
@@ -40,10 +45,10 @@
                 ></b-input>
               </b-field>
               <b-field label="Пол">
-                <b-radio v-model="newClient.gender" name="name" native-value="1">
+                <b-radio v-model="newClient.gender" native-value="M">
                   Мужской
                 </b-radio>
-                <b-radio v-model="newClient.gender" name="name" native-value="2">
+                <b-radio v-model="newClient.gender" native-value="F">
                   Женский
                 </b-radio>
               </b-field>
@@ -55,6 +60,7 @@
             <b-field label="Клиенты" class="record-select">
               <b-select
                 expanded
+                required
                 v-model="selectedClient"
                 placeholder="Выберите клиента"
               >
@@ -73,11 +79,18 @@
       </b-tabs>
     </div>
     <div
-      class="card record mt-2 is-flex is-justify-content-center is-flex-wrap-wrap p-3"
+      class="
+        card
+        record
+        mt-2
+        is-flex is-justify-content-center is-flex-wrap-wrap
+        p-3
+      "
     >
       <div class="record-master">
         <b-field label="Мастер">
           <b-select
+            required
             expanded
             v-model="selectedMaster"
             placeholder="Выберите мастера"
@@ -94,6 +107,7 @@
         </b-field>
         <b-field label="Услуги">
           <b-select
+            required
             expanded
             v-model="selectedService"
             placeholder="Выберите тип услуги"
@@ -112,20 +126,19 @@
             <b-datepicker
               position="is-top-left"
               v-model="selectedDate"
-              :show-week-number="showWeekNumber"
-              :locale="locale"
               placeholder="Введите дату"
               icon="calendar"
               icon-pack="fas"
+              required
               :icon-right="selectedDate ? 'times-circle' : ''"
               icon-right-clickable
               @icon-right-click="clearDate"
-              trap-focus
             >
             </b-datepicker>
           </b-field>
           <b-field label="Временной интервал" class="data-info__timeIntervals">
             <b-select
+              required
               expanded
               v-model="selectedTimeInterval"
               placeholder="Выберите временной интервал"
@@ -142,7 +155,7 @@
         </div>
       </div>
       <div class="record-master is-flex is-justify-content-end mt-2">
-        <b-button type="is-success" @click="save">Сохранить</b-button>
+        <b-button :disabled="!validated" type="is-success" @click="save">Сохранить</b-button>
       </div>
     </div>
   </div>
@@ -150,20 +163,18 @@
 
 <script lang="ts">
 import Vue from "vue";
+import Data from "../utils/Data";
+import { ToastProgrammatic as Toast } from "buefy";
 
-interface IState {
-  selectedDate?: Date | null;
-  [x: string]: any;
-}
 export default Vue.extend({
   data() {
     return {
       nameTab: 0,
-      selectedDate: null,
-      selectedService: null,
-      selectedClient: null,
-      selectedMaster: null,
-      selectedTimeInterval: null,
+      selectedDate: undefined as Date | undefined,
+      selectedService: undefined as any,
+      selectedClient: undefined as any,
+      selectedMaster: undefined as any,
+      selectedTimeInterval: undefined as any,
 
       newClient: {
         surname: "",
@@ -174,122 +185,59 @@ export default Vue.extend({
         email: "",
       },
 
-      masters: [
-        {
-          id: 1,
-          name: "Варвара",
-          surname: "Новикова",
-          patronymic: "Викторовна",
-          workPhone: "7(998)999-88-99",
-        },
-        {
-          id: 2,
-          name: "Агата",
-          surname: "Смирнова",
-          patronymic: "Данииловна",
-          workPhone: "7(997)999-77-99",
-        },
-        {
-          id: 3,
-          fio: "",
-          name: "Катерина",
-          surname: "Нестерова",
-          patronymic: "Марковна",
-          workPhone: "7(998)999-88-99",
-        },
-      ],
-      clients: [
-        {
-          id: 1,
-          fio: "",
-          surname: "Иванов",
-          name: "Иван",
-          patronymic: "Иванович",
-          gender: null,
-          phone: "8(800)555-35-35",
-          email: "test1@test.com",
-          hasTelegram: true,
-          hasWhatsapp: null,
-          isVIP: null,
-        },
-        {
-          id: 2,
-          surname: "Чеботарева",
-          name: "Полина",
-          patronymic: "Богдановна",
-          gender: null,
-          phone: "7(937)999-99-99",
-          email: "test2@test.com",
-          hasTelegram: null,
-          hasWhatsapp: true,
-          isVIP: null,
-        },
-        {
-          id: 3,
-          surname: "Новикова",
-          name: "Мария",
-          patronymic: "Кирилловна",
-          gender: null,
-          phone: "7(937)945-99-99",
-          email: "test3@test.com",
-          hasTelegram: null,
-          hasWhatsapp: null,
-          isVIP: true,
-        },
-        {
-          id: 4,
-          surname: "Егорова",
-          name: "Василиса",
-          patronymic: "Львовна",
-          gender: null,
-          phone: "7(937)777-99-91",
-          email: "test4@test.com",
-          hasTelegram: null,
-          hasWhatsapp: true,
-          isVIP: null,
-        },
-      ],
-      timeIntervals: [
-        {
-          id: 1,
-          title: "с 9:00 до 13:00",
-        },
-        {
-          id: 2,
-          title: "с 14:00 до 18:00",
-        },
-      ],
-      services: [
-        {
-          id: 1,
-          title: "Маникюр",
-          description: null,
-          cost: 3000,
-        },
-        {
-          id: 2,
-          title: "Педикюр",
-          description: null,
-          cost: 3000,
-        },
-      ],
-    } as IState;
+      masters: [],
+      clients: [],
+      timeIntervals: [],
+      services: [],
+    };
   },
-  created() {},
+  computed: {
+    validated(): boolean {
+      return !!(this.selectedDate
+        && this.selectedService
+        && (this.nameTab == 0 ? this.newClient.name : this.selectedClient)
+        && this.selectedMaster
+        && this.selectedTimeInterval);
+    }
+  },
+  async created() {
+    const promises = [];
+    promises.push(Data.getQuery("master"));
+    promises.push(Data.getQuery("service"));
+    promises.push(Data.getQuery("timeinterval"));
+    promises.push(Data.getQuery("client"));
+
+    const [masters, services, timeIntervals, clients] = await Promise.all(
+      promises
+    );
+
+    this.masters = masters;
+    this.services = services;
+    this.timeIntervals = timeIntervals;
+    this.clients = clients;
+  },
   watch: {},
   methods: {
     clearDate(): void {
-      this.selectedDate = null;
+      this.selectedDate = undefined;
     },
     save() {
+      const date = this.selectedDate;
+      const dateMonthNum = date ? (date.getMonth() + 1).toString() : '';
+      const dateDayNum = date ? (date.getDate() + 1).toString() : '';
+
       const record = {
         serviceId: this.selectedService,
         timeIntervalId: this.selectedTimeInterval,
         masterId: this.selectedMaster,
-        date: this.selectedDate?.toISOString(),
+        date: date
+          ? `${date.getFullYear()}-${
+            dateMonthNum.length === 1 ? '0' + dateMonthNum : dateMonthNum
+            }-${dateDayNum.length === 1 ? '0' + dateDayNum : dateDayNum}`
+          : undefined,
         check: null,
         clientId: null,
-        client: undefined,
+        client: undefined as any,
       };
 
       if (this.nameTab == 1) {
@@ -298,7 +246,20 @@ export default Vue.extend({
         record.client = this.newClient;
       }
 
-      console.log(record)
+      Data.jsonQuery("record", record)
+        .then(() => {
+          Toast.open({
+            message: "Запись успешно создана",
+            type: "is-success",
+          });
+          this.$router.push("/table");
+        })
+        .catch(() => {
+          Toast.open({
+            message: "Ошибка создания записи",
+            type: "is-danger",
+          });
+        });
     },
   },
 });
