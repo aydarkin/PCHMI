@@ -45,21 +45,17 @@
       </b-table>
     </div>
     <div
-      class="
-        table__buttons
-        is-flex is-flex-wrap-nowrap is-justify-content-space-between
-        mt-1
-      "
+      class="table__buttons is-flex is-flex-wrap-nowrap is-justify-content-space-between mt-1"
     >
       <b-button type="is-success" :disabled="!selected" @click="selected = null"
         >Снять выделение</b-button
       >
       <div
-        class="
-          record__complete
-          is-flex is-flex-wrap-nowrap is-justify-content-end
-        "
+        class="record__complete is-flex is-flex-wrap-nowrap is-justify-content-end"
       >
+        <b-button type="is-danger" :disabled="!selected" @click="recordDelete()"
+          >Удалить запись</b-button
+        >
         <b-button
           v-if="!(selected && selected.check)"
           type="is-primary"
@@ -77,13 +73,7 @@
     </div>
     <b-modal v-model="isModalActive" :width="640">
       <div
-        class="
-          notification
-          is-info is-light is-flex
-          iis-flex
-          is-flex-direction-column is-align-items-center
-          p-3
-        "
+        class="notification is-info is-light is-flex iis-flex is-flex-direction-column is-align-items-center p-3"
       >
         <div class="title is-size-7">
           Номер чека: {{ selected && selected.check }}
@@ -94,26 +84,27 @@
           {{ selected && selected.client.patronymic }}
         </div>
         <div
-          class="
-            modal-content
-            is-flex is-flex-direction-column is-flex-wrap-nowrap
-            p-5
-          "
+          class="modal-content is-flex is-flex-direction-column is-flex-wrap-nowrap p-5"
         >
           <div class="Subtitle is-size-6">
-            <span class="has-text-weight-bold">Услуга:</span> {{ selected && selected.service.title }}
+            <span class="has-text-weight-bold">Услуга:</span>
+            {{ selected && selected.service.title }}
           </div>
           <div class="Subtitle is-size-6">
-            <span class="has-text-weight-bold">Мастер:</span> {{selected && getFio(selected.master)}}
+            <span class="has-text-weight-bold">Мастер:</span>
+            {{ selected && getFio(selected.master) }}
           </div>
           <div class="Subtitle is-size-6">
-            <span class="has-text-weight-bold">Дата:</span> {{ selected && getDateText(selected.date) }}
+            <span class="has-text-weight-bold">Дата:</span>
+            {{ selected && getDateText(selected.date) }}
           </div>
           <div class="Subtitle is-size-6">
-            <span class="has-text-weight-bold">Время:</span> {{ selected && selected.timeInterval.title }}
+            <span class="has-text-weight-bold">Время:</span>
+            {{ selected && selected.timeInterval.title }}
           </div>
           <div class="Subtitle is-size-6">
-            <span class="has-text-weight-bold">Стоимость:</span> {{ selected && selected.service.cost }}₽
+            <span class="has-text-weight-bold">Стоимость:</span>
+            {{ selected && selected.service.cost }}₽
           </div>
         </div>
       </div>
@@ -173,13 +164,16 @@ export default Vue.extend({
     },
     recordComplete() {
       if (this.selected) {
-        Data.putQuery("record/" + this.selected.id, {
-          // костыль
-          check: "create",
-        }, undefined, true)
+        Data.putQuery(
+          "record/" + this.selected.id,
+          {
+            // костыль
+            check: "create",
+          },
+          undefined,
+          true
+        )
           .then((rec) => {
-            console.log(this.selected);
-            
             this.selected.check = rec.check;
             Toast.open({
               message: "Запись успешно завершена",
@@ -194,6 +188,25 @@ export default Vue.extend({
           });
       }
     },
+    recordDelete(){
+      if (this.selected) {
+        Data.deleteQuery("record/" + this.selected.id)
+          .then(() => {
+            const selectedIndex = this.records.findIndex((rec: any) => rec.id === this.selected.id);
+            this.records.splice(selectedIndex, 1);
+            Toast.open({
+              message: "Запись успешно завершена",
+              type: "is-success",
+            });
+          })
+          .catch(() => {
+            Toast.open({
+              message: "Не удалось завершить запись",
+              type: "is-danger",
+            });
+          });
+      }
+    }
   },
 });
 </script>

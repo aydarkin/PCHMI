@@ -21,7 +21,10 @@ namespace Back.Controllers
                     .Include(x=>x.Master)
                     .ToList();
 
-                records = records.OrderByDescending(l => l.Date).ThenByDescending(l => l.TimeIntervalId).ToList();
+                records = records
+                    .OrderByDescending(l => l.Date)
+                    .ThenByDescending(l => l.TimeIntervalId)
+                    .ToList();
             }
             
             return records;
