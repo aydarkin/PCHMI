@@ -1,11 +1,11 @@
 <template>
   <div
-    class="
-      has-background-info
-      content-auth
-      is-flex is-justify-content-center is-align-items-center
-    "
+    class="has-background-info content-auth is-flex is-flex-direction-column is-justify-content-center is-align-items-center"
   >
+    <figure class="image is-96x96 mr-3 is-flex is-align-self-center">
+      <img src="@/assets/manicure.png" />
+    </figure>
+    <div class="title is-size-3 has-text-white p-3">Панель администратора</div>
     <div
       class="card form is-flex is-justify-content-center is-flex-wrap-wrap p-4"
     >
